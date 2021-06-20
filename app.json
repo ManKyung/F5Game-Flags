@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "f5game-flag",
-    "slug": "f5game-flag",
+    "slug": "F5-FLAGS",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,17 +18,30 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-1963334904140891~8233588671"
       },
       "package": "com.f5game.flags",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyCyrZel__RU5Rkm8I10A16rqtgNGrTIdSA",
+          "authDomain": "f5game-flag.firebaseapp.com",
+          "projectId": "f5game-flag",
+          "storageBucket": "f5game-flag.appspot.com",
+          "messagingSenderId": "186196784006",
+          "appId": "1:186196784006:web:ec8a1073e1505c145ef207",
+          "measurementId": "G-DTCPGSGMDY"
+        }
+      }
     }
   }
 }

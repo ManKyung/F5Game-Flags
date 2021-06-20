@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Button, Layout, Text } from "@ui-kitten/components";
-import { CONTINENT, getStage } from "../../lib";
+import { Sound, CONTINENT, getStage } from "../../lib";
 
 export const Quiz = ({ navigation }) => {
   const navi = (stage) => {
+    Sound.playSound("click");
     const items = getStage(stage);
     navigation.push("Play", { items, stage });
   };
+
   return (
     <ScrollView
       contentContainerStyle={{

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "186196784006",
+    "project_id": "f5game-flag",
+    "storage_bucket": "f5game-flag.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186196784006:android:ec4def033b4242ad5ef207",
+        "android_client_info": {
+          "package_name": "com.f5game.flags"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186196784006-tl6b2s938n60tnlvpho1e0p25jdohsnk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP1W0BG3XFOrzwjAvIY5URlgvcOd0oJSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186196784006-tl6b2s938n60tnlvpho1e0p25jdohsnk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

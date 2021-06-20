@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Button, Layout, Text } from "@ui-kitten/components";
+import { Button, Layout } from "@ui-kitten/components";
+import { Sound } from "../../lib";
 
-export const Home = ({ navigation: { navigate } }) => {
+export const Home = ({ navigation }) => {
+  const navi = (stage) => {
+    Sound.playSound("click");
+    navigation.push(stage);
+  };
+
   return (
     <Layout
       style={{
@@ -13,7 +19,7 @@ export const Home = ({ navigation: { navigate } }) => {
       }}
     >
       <Button
-        onPress={() => navigate("Quiz")}
+        onPress={() => navi("Quiz")}
         status="primary"
         style={{ width: "100%", marginBottom: 30 }}
         size="giant"
@@ -21,7 +27,7 @@ export const Home = ({ navigation: { navigate } }) => {
         PLAY
       </Button>
       <Button
-        onPress={() => navigate("Dictionary")}
+        onPress={() => navi("Dictionary")}
         style={{ width: "100%" }}
         size="giant"
       >
