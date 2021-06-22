@@ -77,7 +77,9 @@ export const Dictionary = () => {
       const filterData = FLAGS.filter(
         (item) =>
           item.name_kr.includes(word) ||
-          item.name_en.toLowerCase().includes(word)
+          item.name_en.toLowerCase().includes(word) ||
+          item.capital_kr.includes(word) ||
+          item.capital_en.toLowerCase().includes(word)
       );
       setData(filterData);
     },
@@ -104,7 +106,7 @@ export const Dictionary = () => {
       />
       <Input
         value={value}
-        placeholder="Search Country"
+        placeholder="Search Country or Capital"
         accessoryRight={renderIcon}
         onChangeText={(nextValue) => doSearch(nextValue)}
       />

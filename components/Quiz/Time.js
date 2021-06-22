@@ -5,7 +5,7 @@ import { Dimensions } from "react-native";
 const screen = Dimensions.get("screen");
 const defaultTime = 120;
 
-export const Time = ({ setIsGameover }) => {
+export const Time = ({ setIsTimeover }) => {
   const [progressCount, setProgressCount] = useState(1);
   const [timeLimit, setTimeLimit] = useState(defaultTime);
 
@@ -17,7 +17,7 @@ export const Time = ({ setIsGameover }) => {
         setTimeLimit(timeLimit - 1);
       }, 1000);
     if (timeLimit < 0) {
-      setIsGameover(true);
+      setIsTimeover(true);
     }
     return () => clearInterval(timer);
   }, [timeLimit]);

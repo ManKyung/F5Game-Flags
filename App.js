@@ -1,11 +1,6 @@
 import React, { useEffect } from "react";
 import * as eva from "@eva-design/eva";
-import {
-  ApplicationProvider,
-  Layout,
-  Button,
-  IconRegistry,
-} from "@ui-kitten/components";
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { default as theme } from "./theme.json";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -53,7 +48,7 @@ export default () => {
               options={{
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="Play"
               component={Play}
@@ -61,7 +56,7 @@ export default () => {
                 headerShown: false,
               }}
               initialParams={{ items, stage: 1 }}
-            /> */}
+            />
             <Stack.Screen
               name="Dictionary"
               component={Dictionary}

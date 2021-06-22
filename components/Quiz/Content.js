@@ -1,10 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Layout, Button } from "@ui-kitten/components";
+import React, { useState, useEffect } from "react";
+import { Layout, Button, Text } from "@ui-kitten/components";
 import { Image, Dimensions, StyleSheet, Vibration } from "react-native";
 import { getRandomNumber, shuffle } from "../../lib";
 import { Time } from "./Time";
-import { GameoverModal } from "./Gameover";
+import { GameoverModal } from "./GameoverModal";
+import { GameClearModal } from "./GameClearModal";
 import { Sound } from "../../lib";
+import { Interstitial } from "../../lib";
 
 const screen = Dimensions.get("screen");
 const imageWidth = screen.width - 40;
@@ -12,15 +14,40 @@ const imageHeight = imageWidth * 0.65;
 const delayTime = 700;
 let randomNumberItems = [];
 
-export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
+export const PlayContent = ({
+  flagItems,
+  setLife,
+  life,
+  navigation,
+  isCapital,
+}) => {
+  const totalCount = flagItems.length;
   const [count, setCount] = useState(0);
   const [isStart, setIsStart] = useState(true);
   const [isWrong, setIsWrong] = useState([false, false, false, false]);
   const [isGameover, setIsGameover] = useState(false);
+  const [isTimeover, setIsTimeover] = useState(false);
   const [isGameoverModal, setIsGameoverModal] = useState(false);
+  const [isGameClearModal, setIsGameClearModal] = useState(false);
+  const [clearCount, setClearCount] = useState(0);
 
+  useEffect(() => {
+    console.log("useEffect");
+    if (isTimeover) {
+      setTimeout(() => {
+        setIsGameoverModal(true);
+        setIsTimeover(false);
+      }, 700);
+    }
+    if (isGameover) {
+      Interstitial();
+      setIsStart(true);
+      setIsGameover(false);
+      console.log("gameover", isGameover);
+      setLife(5);
+    }
+  }, [isStart, isGameover, isTimeover]);
   if (isStart) {
-    // life = 3;
     randomNumberItems = [];
     randomNumberItems.push(count);
     while (randomNumberItems.length !== 4) {
@@ -33,10 +60,6 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
     setIsStart(false);
   }
 
-  if (isGameover) {
-    console.log("gameover");
-  }
-
   const changeButtonColor = (index, change) => {
     let d = isWrong;
     d[index] = change;
@@ -46,14 +69,15 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
   const doPress = (item, index) => {
     if (item.index === flagItems[count].index) {
       Sound.playSound("ok");
+      setClearCount(clearCount + 1);
+      setIsGameClearModal(true);
       if (flagItems.length - 1 === count) {
-        console.log("all clear");
+        setIsClearModal(true);
       } else {
         setTimeout(() => {
           setCount(count + 1);
           setIsStart(true);
         }, delayTime);
-
         changeButtonColor(index, "answer");
       }
     } else {
@@ -68,7 +92,7 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
       if (life - 1 === 0) {
         setTimeout(() => {
           setIsGameoverModal(true);
-        }, 1000);
+        }, 700);
       }
     }
 
@@ -78,9 +102,11 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
   };
   return (
     <>
-      <Time setIsGameover={setIsGameover} />
-      {/* <Button onPress={() => playSound()}>ttt</Button> */}
+      <Time setIsTimeover={setIsTimeover} />
       <Layout style={styles.layout} level="2">
+        <Text category="h3">
+          {clearCount} / {totalCount}
+        </Text>
         <Image
           source={flagItems[count].image}
           style={{
@@ -88,6 +114,7 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
             height: imageHeight,
             resizeMode: "stretch",
             marginBottom: 40,
+            marginTop: 20,
           }}
         />
         {randomNumberItems.map((number, index) => {
@@ -105,7 +132,9 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
               appearance="filled"
               onPress={() => doPress(flagItems[number], index)}
             >
-              {flagItems[number]["name_kr"]}
+              {isCapital
+                ? flagItems[number]["capital_kr"]
+                : flagItems[number]["name_kr"]}
             </Button>
           );
         })}
@@ -113,6 +142,13 @@ export const PlayContent = ({ flagItems, setLife, life, navigation }) => {
       {isGameoverModal ? (
         <GameoverModal
           setIsGameoverModal={setIsGameoverModal}
+          setIsGameover={setIsGameover}
+          navigation={navigation}
+        />
+      ) : null}
+      {isGameClearModal ? (
+        <GameClearModal
+          setIsGameClearModal={setIsGameClearModal}
           navigation={navigation}
         />
       ) : null}

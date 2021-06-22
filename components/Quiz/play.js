@@ -10,7 +10,7 @@ import {
 } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
-import { Banner, Interstitial, Sound } from "../../lib";
+import { Banner, Sound } from "../../lib";
 import { PlayContent } from "./Content";
 
 const HeartIcon = (props) => <Icon {...props} name="heart" fill="yellow" />;
@@ -22,9 +22,9 @@ const TVIcon = (props) => <Icon {...props} name="tv" />;
 const GlobeIcon = (props) => <Icon {...props} name="globe" />;
 
 export const Play = ({ navigation, route }) => {
-  const { items, stage } = route.params;
+  const { items, stage, isCapital } = route.params;
   const [menuVisible, setMenuVisible] = useState(false);
-  const [life, setLife] = useState(10);
+  const [life, setLife] = useState(5);
   const [soundText, setSoundText] = useState(
     Sound.isSound ? "Sound On" : "Sound Off"
   );
@@ -91,6 +91,8 @@ export const Play = ({ navigation, route }) => {
         flagItems={items}
         setLife={setLife}
         life={life}
+        stage={stage}
+        isCapital={isCapital}
       />
 
       <Banner />
