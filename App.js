@@ -42,13 +42,13 @@ export default () => {
                 headerShown: false,
               }}
             /> */}
-            {/* <Stack.Screen
+            <Stack.Screen
               name="Home"
               component={Home}
               options={{
                 headerShown: false,
               }}
-            /> */}
+            />
             <Stack.Screen
               name="Quiz"
               component={Quiz}
