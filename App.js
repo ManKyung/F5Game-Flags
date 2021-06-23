@@ -36,19 +36,26 @@ export default () => {
         <NavigationContainer>
           <Stack.Navigator>
             {/* <Stack.Screen
+              name="Score"
+              component={Score}
+              options={{
+                headerShown: false,
+              }}
+            /> */}
+            {/* <Stack.Screen
               name="Home"
               component={Home}
               options={{
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="Quiz"
               component={Quiz}
               options={{
                 headerShown: false,
               }}
-            /> */}
+            />
             <Stack.Screen
               name="Play"
               component={Play}

@@ -1,13 +1,19 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import * as Progress from "react-native-progress";
 import { Dimensions } from "react-native";
 
 const screen = Dimensions.get("screen");
 const defaultTime = 120;
 
-export const Time = ({ setIsTimeover }) => {
+export const Time = ({ setIsTimeover, isGameClear, timeReset }) => {
   const [progressCount, setProgressCount] = useState(1);
   const [timeLimit, setTimeLimit] = useState(defaultTime);
+
+  useEffect(() => {
+    if (timeReset) {
+      setProgressCount(1);
+    }
+  }, [timeReset]);
 
   useLayoutEffect(() => {
     const timer =
@@ -19,8 +25,12 @@ export const Time = ({ setIsTimeover }) => {
     if (timeLimit < 0) {
       setIsTimeover(true);
     }
+    if (isGameClear) {
+      clearInterval(timer);
+    }
     return () => clearInterval(timer);
   }, [timeLimit]);
+
   return (
     <>
       <Progress.Bar

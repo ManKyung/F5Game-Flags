@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Button, Text } from "@ui-kitten/components";
-import { Image, Dimensions, StyleSheet, Vibration } from "react-native";
+import { Image, Dimensions, StyleSheet } from "react-native";
 import { getRandomNumber, shuffle } from "../../lib";
-import { Time } from "./Time";
 import { GameoverModal } from "./GameoverModal";
 import { GameClearModal } from "./GameClearModal";
-import { Sound } from "../../lib";
-import { Interstitial } from "../../lib";
+import { Sound, Interstitial } from "../../lib";
+import useStore from "../../stores";
 
 const screen = Dimensions.get("screen");
 const imageWidth = screen.width - 40;
@@ -20,25 +19,20 @@ export const PlayContent = ({
   life,
   navigation,
   isCapital,
+  score: scoreKey,
 }) => {
+  const { score } = useStore();
+  const scoreName = isCapital ? "capital" : "flag";
   const totalCount = flagItems.length;
   const [count, setCount] = useState(0);
   const [isStart, setIsStart] = useState(true);
   const [isWrong, setIsWrong] = useState([false, false, false, false]);
   const [isGameover, setIsGameover] = useState(false);
-  const [isTimeover, setIsTimeover] = useState(false);
   const [isGameoverModal, setIsGameoverModal] = useState(false);
   const [isGameClearModal, setIsGameClearModal] = useState(false);
   const [clearCount, setClearCount] = useState(0);
 
   useEffect(() => {
-    console.log("useEffect");
-    if (isTimeover) {
-      setTimeout(() => {
-        setIsGameoverModal(true);
-        setIsTimeover(false);
-      }, 700);
-    }
     if (isGameover) {
       Interstitial();
       setIsStart(true);
@@ -46,7 +40,7 @@ export const PlayContent = ({
       console.log("gameover", isGameover);
       setLife(5);
     }
-  }, [isStart, isGameover, isTimeover]);
+  }, [isStart, isGameover]);
   if (isStart) {
     randomNumberItems = [];
     randomNumberItems.push(count);
@@ -70,9 +64,11 @@ export const PlayContent = ({
     if (item.index === flagItems[count].index) {
       Sound.playSound("ok");
       setClearCount(clearCount + 1);
-      setIsGameClearModal(true);
       if (flagItems.length - 1 === count) {
-        setIsClearModal(true);
+        setTimeout(() => {
+          setIsGameClearModal(true);
+          score.setScore(scoreName, scoreKey);
+        }, 700);
       } else {
         setTimeout(() => {
           setCount(count + 1);
@@ -81,11 +77,8 @@ export const PlayContent = ({
         changeButtonColor(index, "answer");
       }
     } else {
-      if (Sound.isSound) {
-        Sound.playSound("wrong");
-      } else {
-        Vibration.vibrate();
-      }
+      Sound.playSound("wrong");
+
       setLife(life - 1);
       changeButtonColor(index, true);
 
@@ -102,7 +95,6 @@ export const PlayContent = ({
   };
   return (
     <>
-      <Time setIsTimeover={setIsTimeover} />
       <Layout style={styles.layout} level="2">
         <Text category="h3">
           {clearCount} / {totalCount}

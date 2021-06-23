@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useState, useEffect } from "react";
 import {
   Layout,
   TopNavigation,
@@ -6,18 +6,14 @@ import {
   ListItem,
   Text,
   Input,
-  Card,
-  Button,
-  Modal,
 } from "@ui-kitten/components";
 
-import { StyleSheet, Image, FlatList } from "react-native";
+import { StyleSheet, Image, FlatList, BackHandler } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { FLAGS } from "../../lib";
 import { DictionaryDetail } from "./Detail";
 
-const arePropsEqual = (prev, curr) => {
-  // return prev.item.name_kr === curr.item.name_kr;
+const arePropsEqual = () => {
   return true;
 };
 
@@ -47,19 +43,37 @@ export const Dictionary = () => {
   const [value, setValue] = useState("");
   const [modalItem, setModalItem] = useState({});
   const [data, setData] = useState(
-    // FLAGS.sort((a, b) => {
-    //   const nameB = b.name_kr.toUpperCase();
-    //   const nameA = a.name_kr.toUpperCase();
-    //   if (nameA < nameB) {
-    //     return -1;
-    //   }
-    //   if (nameA > nameB) {
-    //     return 1;
-    //   }
-    //   return 0;
-    // })
-    FLAGS
+    FLAGS.sort((a, b) => {
+      const nameB = b.name_kr.toUpperCase();
+      const nameA = a.name_kr.toUpperCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    })
+    // FLAGS
   );
+
+  useEffect(() => {
+    const backAction = () => {
+      if (!visible) {
+        return false;
+      } else {
+        setVisible(false);
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [visible]);
 
   const renderIcon = (props) => <Icon {...props} name={"search-outline"} />;
 

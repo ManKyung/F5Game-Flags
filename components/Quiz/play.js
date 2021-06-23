@@ -14,7 +14,6 @@ import { Banner, Sound } from "../../lib";
 import { PlayContent } from "./Content";
 
 const HeartIcon = (props) => <Icon {...props} name="heart" fill="yellow" />;
-// const HeartOutlineIcon = (props) => <Icon {...props} name="heart-outline" />;
 const MenuIcon = (props) => <Icon {...props} name="more-vertical" />;
 const VolumeUpIcon = (props) => <Icon {...props} name="volume-up-outline" />;
 const VolumeOffIcon = (props) => <Icon {...props} name="volume-off-outline" />;
@@ -22,7 +21,7 @@ const TVIcon = (props) => <Icon {...props} name="tv" />;
 const GlobeIcon = (props) => <Icon {...props} name="globe" />;
 
 export const Play = ({ navigation, route }) => {
-  const { items, stage, isCapital } = route.params;
+  const { items, stage, isCapital, title, score } = route.params;
   const [menuVisible, setMenuVisible] = useState(false);
   const [life, setLife] = useState(5);
   const [soundText, setSoundText] = useState(
@@ -81,7 +80,7 @@ export const Play = ({ navigation, route }) => {
       <TopNavigation
         title={() => (
           <Text category="h5" style={styles.title}>
-            LEVEL {stage}
+            {title}
           </Text>
         )}
         accessoryRight={renderRightActions}
@@ -93,6 +92,7 @@ export const Play = ({ navigation, route }) => {
         life={life}
         stage={stage}
         isCapital={isCapital}
+        score={score}
       />
 
       <Banner />

@@ -1,7 +1,6 @@
 import React, { memo } from "react";
-import { Text, Card, Modal } from "@ui-kitten/components";
-import { CONTINENT_KR, CONTINENT_DETAIL_KR, CONTINENT_DETAIL } from "../../lib";
-import GradientButton from "react-native-gradient-buttons";
+import { Card, Modal, Icon, Button } from "@ui-kitten/components";
+import { CONTINENT_DETAIL_KR } from "../../lib";
 import {
   Table,
   TableWrapper,
@@ -16,13 +15,12 @@ const imageWidth = screen.width > 400 ? 400 : screen.width - 100;
 const imageHeight = imageWidth * 0.65;
 const tableHead = ["", "한국어", "English"];
 const tableTitle = ["국가", "대륙", "수도"];
-
+const CloseIcon = (props) => <Icon {...props} name="close" />;
 const arePropsEqual = (prev, curr) => {
   return prev.visible === curr.visible;
 };
 export const DictionaryDetail = memo(
   ({ visible, setVisible, modalItem: item }) => {
-    console.log(item);
     const data = [
       [item.name_kr, item.name_en],
       [CONTINENT_DETAIL_KR[item.continent_detail], item.continent_detail],
@@ -34,13 +32,34 @@ export const DictionaryDetail = memo(
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setVisible(false)}
       >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: -80,
+          }}
+        >
+          <Button
+            status="control"
+            appearance="ghost"
+            size="giant"
+            onPress={() => setVisible(false)}
+            accessoryLeft={CloseIcon}
+          />
+        </View>
         <Card status="primary">
           <Image
             source={item.image}
-            style={{ width: imageWidth, height: imageHeight, marginBottom: 20 }}
+            style={{
+              width: imageWidth,
+              height: imageHeight,
+              resizeMode: "stretch",
+              marginBottom: 20,
+            }}
           />
 
-          <Table borderStyle={{ borderWidth: 1, borderColor: "#aaa" }}>
+          <Table borderStyle={{ borderWidth: 1, borderColor: "#666" }}>
             <Row
               data={tableHead}
               flexArr={[1, 2, 2]}
@@ -61,17 +80,7 @@ export const DictionaryDetail = memo(
               />
             </TableWrapper>
           </Table>
-          {/* <Text style={[styles.listItem, { marginTop: 20 }]}>
-            국가 : {item.name_kr} / {item.name_en}
-          </Text>
-          <Text style={styles.listItem}>
-            대륙 : {CONTINENT_KR[item.continent]} /{" "}
-            {CONTINENT_DETAIL_KR[item.continent_detail]}
-          </Text>
-          <Text style={[styles.listItem, { marginBottom: 20 }]}>
-            수도 : {item.capital_kr} / {item.capital_en}
-          </Text> */}
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: "row",
@@ -91,7 +100,7 @@ export const DictionaryDetail = memo(
               textStyle={{ fontSize: 14 }}
               onPressAction={() => setVisible(false)}
             />
-          </View>
+          </View> */}
         </Card>
       </Modal>
     );

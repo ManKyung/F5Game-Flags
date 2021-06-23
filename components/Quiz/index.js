@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   SafeAreaView,
@@ -10,54 +10,88 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Text, Card, Layout } from "@ui-kitten/components";
 import { Sound, getStage, getStageItems } from "../../lib";
-import {
-  BackgroundGradient,
-  BackgroundCardGradient,
-} from "../../components/Common";
+import { BackgroundCardGradient } from "../../components/Common";
 import Carousel from "react-native-snap-carousel";
+import { observer } from "mobx-react";
+import useStore from "../../stores";
 
 const { width: screenWidth } = Dimensions.get("window");
 const stageCountryItems = getStageItems(false);
 const stageCapitalItems = getStageItems(true);
 
-export const Quiz = ({ navigation }) => {
-  const navi = (stage, isCapital) => {
+const getScoreImage = (i) => {
+  switch (i) {
+    case 1:
+      return require("../../assets/images/clear/clear_1.png");
+    case 2:
+      return require("../../assets/images/clear/clear_2.png");
+    case 3:
+      return require("../../assets/images/clear/clear_3.png");
+    case 4:
+      return require("../../assets/images/clear/clear_4.png");
+  }
+};
+
+export const Quiz = observer(({ navigation }) => {
+  const { score } = useStore();
+  useEffect(() => {
+    (async () => {
+      await score.getScores("flag");
+      await score.getScores("capital");
+    })();
+  }, []);
+  const navi = (item) => {
+    const { link: stage, isCapital, title, score } = item;
     Sound.playSound("click");
     const items = getStage(stage);
-    navigation.push("Play", { items, stage, isCapital });
+    navigation.push("Play", { items, stage, isCapital, title, score });
   };
-  const _renderItem = useCallback(({ item }) => {
-    return (
-      <Card style={styles.renderView}>
-        <BackgroundCardGradient />
-        <TouchableOpacity
-          style={{ borderRadius: 20 }}
-          activeOpacity={0.5}
-          onPress={() => navi(item.link, item.isCapital)}
-        >
-          <Text style={styles.renderText}>{item.title}</Text>
-          <View style={styles.renderImage}>
-            <Image
-              source={item.image}
-              style={{
-                width: 160,
-                height: 160,
-              }}
-            />
-          </View>
-        </TouchableOpacity>
-      </Card>
-    );
-  }, []);
+  const _renderItem = useCallback(
+    ({ item }) => {
+      // const renderScoreItem = score.flagScoreItems;
+      const renderScoreItem = item.isCapital
+        ? score.capitalScoreItems
+        : score.flagScoreItems;
+      return (
+        <Card style={styles.renderView}>
+          <BackgroundCardGradient />
+          <TouchableOpacity
+            style={{ borderRadius: 20 }}
+            activeOpacity={0.5}
+            onPress={() => navi(item)}
+          >
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={styles.renderText}>{item.title}</Text>
+              <View style={{ flexDirection: "row" }}>
+                {Object.keys(renderScoreItem).length !== 0 &&
+                  renderScoreItem[item.score].count.map((score, index) => {
+                    const scoreImage = getScoreImage(
+                      renderScoreItem[item.score].level
+                    );
+                    return (
+                      <Image
+                        key={index}
+                        source={scoreImage}
+                        style={styles.clearImage}
+                      />
+                    );
+                  })}
+              </View>
+            </View>
+            <View style={styles.renderImage}>
+              <Image source={item.image} style={styles.stageImage} />
+            </View>
+          </TouchableOpacity>
+        </Card>
+      );
+    },
+    [score.flagScoreItems, score.capitalScoreItems]
+  );
   return (
-    <Layout
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingVertical: 20,
-      }}
-    >
+    <Layout style={styles.layout}>
+      <StatusBar hidden={true} />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.view}>
           <Text style={styles.title}>국가</Text>
@@ -84,9 +118,15 @@ export const Quiz = ({ navigation }) => {
       </SafeAreaView>
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   background: {
     position: "absolute",
     left: 0,
@@ -117,5 +157,14 @@ const styles = StyleSheet.create({
   renderImage: {
     flexDirection: "row",
     justifyContent: "flex-end",
+  },
+  stageImage: {
+    width: 160,
+    height: 160,
+  },
+  clearImage: {
+    marginLeft: 0,
+    width: 30,
+    height: 30,
   },
 });
