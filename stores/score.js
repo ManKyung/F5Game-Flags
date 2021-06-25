@@ -1,6 +1,37 @@
 import { observable, runInAction } from "mobx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const initColorScore = {
+  red: {
+    level: 1,
+    count: [],
+  },
+  orange: {
+    level: 1,
+    count: [],
+  },
+  yellow: {
+    level: 1,
+    count: [],
+  },
+  green: {
+    level: 1,
+    count: [],
+  },
+  blue: {
+    level: 1,
+    count: [],
+  },
+  white: {
+    level: 1,
+    count: [],
+  },
+  black: {
+    level: 1,
+    count: [],
+  },
+};
+
 const initScore = {
   level1: {
     level: 1,
@@ -47,23 +78,31 @@ const initScore = {
 const getScores = (name) => {
   return new Promise(async (resolve) => {
     const scores = await AsyncStorage.getItem(`f5_${name}_scores`);
-    resolve(scores ? JSON.parse(scores) : initScore);
+    resolve(
+      scores
+        ? JSON.parse(scores)
+        : name === "color"
+        ? initColorScore
+        : initScore
+    );
   });
 };
 
 const score = observable({
   flagScoreItems: {},
   capitalScoreItems: {},
+  colorScoreItems: {},
   syncScore(name, scores) {
     if (name === "flag") {
       this.flagScoreItems = scores;
     } else if (name === "capital") {
       this.capitalScoreItems = scores;
+    } else if (name === "color") {
+      this.colorScoreItems = scores;
     }
   },
   async getScores(name) {
     const scores = await getScores(name);
-    console.log(scores);
     runInAction(() => {
       this.syncScore(name, scores);
     });

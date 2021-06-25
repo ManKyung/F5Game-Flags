@@ -4,7 +4,7 @@ import { Image, Dimensions, StyleSheet } from "react-native";
 import { getRandomNumber, shuffle } from "../../lib";
 import { GameoverModal } from "./GameoverModal";
 import { GameClearModal } from "./GameClearModal";
-import { Sound, Interstitial } from "../../lib";
+import { Sound, Interstitial, flagColors } from "../../lib";
 import useStore from "../../stores";
 
 const screen = Dimensions.get("screen");
@@ -22,7 +22,11 @@ export const PlayContent = ({
   score: scoreKey,
 }) => {
   const { score } = useStore();
-  const scoreName = isCapital ? "capital" : "flag";
+  const scoreName = flagColors.includes(scoreKey)
+    ? "color"
+    : isCapital
+    ? "capital"
+    : "flag";
   const totalCount = flagItems.length;
   const [count, setCount] = useState(0);
   const [isStart, setIsStart] = useState(true);
@@ -37,8 +41,9 @@ export const PlayContent = ({
       Interstitial();
       setIsStart(true);
       setIsGameover(false);
-      console.log("gameover", isGameover);
       setLife(5);
+      setClearCount(0);
+      setCount(0);
     }
   }, [isStart, isGameover]);
   if (isStart) {

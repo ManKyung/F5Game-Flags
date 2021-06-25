@@ -1,15 +1,21 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView,
   Image,
   Dimensions,
   StyleSheet,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Text, Card, Layout } from "@ui-kitten/components";
-import { Sound, getStage, getStageItems } from "../../lib";
+import {
+  Sound,
+  getStage,
+  getStageItems,
+  getStageItemsByColor,
+} from "../../lib";
 import { BackgroundCardGradient } from "../../components/Common";
 import Carousel from "react-native-snap-carousel";
 import { observer } from "mobx-react";
@@ -18,6 +24,7 @@ import useStore from "../../stores";
 const { width: screenWidth } = Dimensions.get("window");
 const stageCountryItems = getStageItems(false);
 const stageCapitalItems = getStageItems(true);
+const stageColorItems = getStageItemsByColor();
 
 const getScoreImage = (i) => {
   switch (i) {
@@ -32,29 +39,42 @@ const getScoreImage = (i) => {
   }
 };
 
+const isColor = (obj) => {
+  return obj.hasOwnProperty("gradientColor");
+};
+
 export const Quiz = observer(({ navigation }) => {
   const { score } = useStore();
   useEffect(() => {
     (async () => {
       await score.getScores("flag");
       await score.getScores("capital");
+      await score.getScores("color");
     })();
   }, []);
   const navi = (item) => {
     const { link: stage, isCapital, title, score } = item;
     Sound.playSound("click");
     const items = getStage(stage);
+
     navigation.push("Play", { items, stage, isCapital, title, score });
   };
   const _renderItem = useCallback(
     ({ item }) => {
-      // const renderScoreItem = score.flagScoreItems;
-      const renderScoreItem = item.isCapital
+      const isColorStage = isColor(item);
+      const renderScoreItem = isColorStage
+        ? score.colorScoreItems
+        : item.isCapital
         ? score.capitalScoreItems
         : score.flagScoreItems;
+
       return (
         <Card style={styles.renderView}>
-          <BackgroundCardGradient />
+          <BackgroundCardGradient
+            gradientColor={
+              isColorStage ? item.gradientColor : ["#4F73C3", "#3C46A2"]
+            }
+          />
           <TouchableOpacity
             style={{ borderRadius: 20 }}
             activeOpacity={0.5}
@@ -81,40 +101,58 @@ export const Quiz = observer(({ navigation }) => {
               </View>
             </View>
             <View style={styles.renderImage}>
-              <Image source={item.image} style={styles.stageImage} />
+              <Image
+                source={item.image}
+                style={
+                  isColorStage ? styles.clearColorImage : styles.stageImage
+                }
+              />
             </View>
           </TouchableOpacity>
         </Card>
       );
     },
-    [score.flagScoreItems, score.capitalScoreItems]
+    [score.flagScoreItems, score.capitalScoreItems, score.colorScoreItems]
   );
   return (
     <Layout style={styles.layout}>
       <StatusBar hidden={true} />
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.view}>
-          <Text style={styles.title}>국가</Text>
-          <Carousel
-            layout={"default"}
-            sliderWidth={screenWidth}
-            sliderHeight={screenWidth}
-            itemWidth={screenWidth - 80}
-            data={stageCountryItems}
-            renderItem={_renderItem}
-          />
-        </View>
-        <View style={styles.view}>
-          <Text style={styles.title}>수도</Text>
-          <Carousel
-            layout={"default"}
-            sliderWidth={screenWidth}
-            sliderHeight={screenWidth}
-            itemWidth={screenWidth - 80}
-            data={stageCapitalItems}
-            renderItem={_renderItem}
-          />
-        </View>
+      <SafeAreaView>
+        <ScrollView>
+          <View style={styles.view}>
+            <Text style={styles.title}>국가</Text>
+            <Carousel
+              layout={"default"}
+              sliderWidth={screenWidth}
+              sliderHeight={screenWidth}
+              itemWidth={screenWidth - 80}
+              data={stageCountryItems}
+              renderItem={_renderItem}
+            />
+          </View>
+          <View style={styles.view}>
+            <Text style={styles.title}>수도</Text>
+            <Carousel
+              layout={"default"}
+              sliderWidth={screenWidth}
+              sliderHeight={screenWidth}
+              itemWidth={screenWidth - 80}
+              data={stageCapitalItems}
+              renderItem={_renderItem}
+            />
+          </View>
+          <View style={styles.view}>
+            <Text style={styles.title}>색상</Text>
+            <Carousel
+              layout={"default"}
+              sliderWidth={screenWidth}
+              sliderHeight={screenWidth}
+              itemWidth={screenWidth - 80}
+              data={stageColorItems}
+              renderItem={_renderItem}
+            />
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </Layout>
   );
@@ -125,7 +163,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
   },
   background: {
     position: "absolute",
@@ -136,6 +173,7 @@ const styles = StyleSheet.create({
   },
   view: {
     flex: 1,
+    paddingVertical: 10,
   },
   title: {
     color: "#f1f2f3",
@@ -157,6 +195,11 @@ const styles = StyleSheet.create({
   renderImage: {
     flexDirection: "row",
     justifyContent: "flex-end",
+  },
+  clearColorImage: {
+    marginTop: 40,
+    width: 180,
+    height: 120,
   },
   stageImage: {
     width: 160,

@@ -5,9 +5,11 @@ import { LinearGradient } from "expo-linear-gradient";
 export const BackgroundGradient = () => (
   <LinearGradient colors={["#26304F", "#353F5C"]} style={styles.background} />
 );
-export const BackgroundCardGradient = () => (
+export const BackgroundCardGradient = ({
+  gradientColor = ["#4F73C3", "#3C46A2"],
+}) => (
   <LinearGradient
-    colors={["#4F73C3", "#3C46A2"]}
+    colors={gradientColor}
     style={{
       height: 250,
       position: "absolute",

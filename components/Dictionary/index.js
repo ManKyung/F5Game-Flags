@@ -6,13 +6,18 @@ import {
   ListItem,
   Text,
   Input,
+  OverflowMenu,
+  MenuItem,
+  TopNavigationAction,
 } from "@ui-kitten/components";
 
 import { StyleSheet, Image, FlatList, BackHandler } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { FLAGS } from "../../lib";
+import { FLAGS, CONTINENT_ARR } from "../../lib";
 import { DictionaryDetail } from "./Detail";
 
+const MenuIcon = (props) => <Icon {...props} name="options-2-outline" />;
+const CheckIcon = (props) => <Icon {...props} name="checkmark-outline" />;
 const arePropsEqual = () => {
   return true;
 };
@@ -40,6 +45,8 @@ const RenderItem = memo(
 );
 export const Dictionary = () => {
   const [visible, setVisible] = useState(false);
+  const [currentMenu, setCurrentMenu] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [value, setValue] = useState("");
   const [modalItem, setModalItem] = useState({});
   const [data, setData] = useState(
@@ -77,6 +84,18 @@ export const Dictionary = () => {
 
   const renderIcon = (props) => <Icon {...props} name={"search-outline"} />;
 
+  const filterItems = (filterValue) => {
+    const filterData =
+      filterValue === "all"
+        ? FLAGS
+        : FLAGS.filter(
+            (item) => item.continent.toLowerCase() === filterValue.toLowerCase()
+          );
+    setCurrentMenu(filterValue);
+    toggleMenu();
+    setData(filterData);
+  };
+
   const onPress = useCallback(
     (item) => {
       setVisible(true);
@@ -100,6 +119,40 @@ export const Dictionary = () => {
     [value]
   );
 
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const renderMenuAction = () => (
+    <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
+  );
+
+  const renderRightActions = () => {
+    return (
+      <>
+        <OverflowMenu
+          anchor={renderMenuAction}
+          visible={menuVisible}
+          onBackdropPress={toggleMenu}
+        >
+          <MenuItem
+            title="ALL"
+            onPress={() => filterItems("all")}
+            accessoryRight={currentMenu === "all" ? CheckIcon : null}
+          />
+          {CONTINENT_ARR.map((item, index) => (
+            <MenuItem
+              key={index}
+              title={item}
+              onPress={() => filterItems(item)}
+              accessoryRight={currentMenu === item ? CheckIcon : null}
+            />
+          ))}
+        </OverflowMenu>
+      </>
+    );
+  };
+
   const doSearch = useCallback(
     (value) => {
       setValue(value);
@@ -117,6 +170,7 @@ export const Dictionary = () => {
             DICTIONARY
           </Text>
         )}
+        accessoryRight={renderRightActions}
       />
       <Input
         value={value}
@@ -128,7 +182,7 @@ export const Dictionary = () => {
       <FlatList
         showsHorizontalScrollIndicator={true}
         data={data}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <RenderItem item={item} onPress={() => onPress(item)} />
         )}
         keyExtractor={(item) => item.index.toString()}
