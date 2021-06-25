@@ -35,13 +35,13 @@ export default () => {
       <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }}>
         <NavigationContainer>
           <Stack.Navigator>
-            {/* <Stack.Screen
+            <Stack.Screen
               name="Home"
               component={Home}
               options={{
                 headerShown: false,
               }}
-            /> */}
+            />
             <Stack.Screen
               name="Quiz"
               component={Quiz}
