@@ -81,9 +81,23 @@ export const Quiz = observer(({ navigation }) => {
             onPress={() => navi(item)}
           >
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={
+                !isColorStage
+                  ? { flexDirection: "row", justifyContent: "space-between" }
+                  : {
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }
+              }
             >
-              <Text style={styles.renderText}>{item.title}</Text>
+              <Text
+                style={
+                  !isColorStage ? styles.renderText : styles.renderColorText
+                }
+              >
+                {item.title}
+              </Text>
               <View style={{ flexDirection: "row" }}>
                 {Object.keys(renderScoreItem).length !== 0 &&
                   renderScoreItem[item.score].count.map((score, index) => {
@@ -100,14 +114,16 @@ export const Quiz = observer(({ navigation }) => {
                   })}
               </View>
             </View>
-            <View style={styles.renderImage}>
-              <Image
-                source={item.image}
-                style={
-                  isColorStage ? styles.clearColorImage : styles.stageImage
-                }
-              />
-            </View>
+            {!isColorStage ? (
+              <View style={styles.renderImage}>
+                <Image
+                  source={item.image}
+                  style={
+                    isColorStage ? styles.clearColorImage : styles.stageImage
+                  }
+                />
+              </View>
+            ) : null}
           </TouchableOpacity>
         </Card>
       );
@@ -184,6 +200,12 @@ const styles = StyleSheet.create({
   renderView: {
     borderRadius: 20,
     minHeight: 250,
+  },
+  renderColorText: {
+    marginTop: 70,
+    fontSize: 48,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   renderText: {
     color: "#f1f2f3",
