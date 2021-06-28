@@ -21,7 +21,7 @@ export const PlayContent = ({
   isCapital,
   score: scoreKey,
 }) => {
-  const { score } = useStore();
+  const { score, lang } = useStore();
   const scoreName = flagColors.includes(scoreKey)
     ? "color"
     : isCapital
@@ -35,6 +35,7 @@ export const PlayContent = ({
   const [isGameoverModal, setIsGameoverModal] = useState(false);
   const [isGameClearModal, setIsGameClearModal] = useState(false);
   const [clearCount, setClearCount] = useState(0);
+  const [isButtonActive, setIsButtonActive] = useState(false);
 
   useEffect(() => {
     if (isGameover) {
@@ -66,6 +67,11 @@ export const PlayContent = ({
   };
 
   const doPress = (item, index) => {
+    if (isButtonActive) {
+      // 이미 눌렀을 경우 리턴
+      return false;
+    }
+    setIsButtonActive(true);
     if (item.index === flagItems[count].index) {
       Sound.playSound("ok");
       setClearCount(clearCount + 1);
@@ -76,15 +82,14 @@ export const PlayContent = ({
         }, 700);
       } else {
         setTimeout(() => {
-          setCount(count + 1);
+          setCount(count + 1); // 다른 국가 가져오기
           setIsStart(true);
         }, delayTime);
         changeButtonColor(index, "answer");
       }
     } else {
       Sound.playSound("wrong");
-
-      setLife(life - 1);
+      setLife(life - 1); // 생명 하나 감소
       changeButtonColor(index, true);
 
       if (life - 1 === 0) {
@@ -96,6 +101,7 @@ export const PlayContent = ({
 
     setTimeout(() => {
       changeButtonColor(index, false);
+      setIsButtonActive(false);
     }, delayTime);
   };
   return (
@@ -130,8 +136,8 @@ export const PlayContent = ({
               onPress={() => doPress(flagItems[number], index)}
             >
               {isCapital
-                ? flagItems[number]["capital_kr"]
-                : flagItems[number]["name_kr"]}
+                ? flagItems[number][`capital_${lang.value}`]
+                : flagItems[number][`name_${lang.value}`]}
             </Button>
           );
         })}

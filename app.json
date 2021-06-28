@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "f5game-flag",
+    "name": "전 세계 국기",
     "slug": "F5-FLAGS",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +23,7 @@
         "googleMobileAdsAppId": "ca-app-pub-1963334904140891~8233588671"
       },
       "package": "com.f5game.flags",
-      "versionCode": 1,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

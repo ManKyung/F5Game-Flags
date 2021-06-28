@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Icon,
   Layout,
@@ -7,11 +7,18 @@ import {
   OverflowMenu,
   TopNavigation,
   TopNavigationAction,
+  Modal,
+  Card,
+  Radio,
+  RadioGroup,
+  Button,
 } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
-import { Banner, Sound } from "../../lib";
+import { AdMobRewarded } from "expo-ads-admob";
+import { Banner, Sound, Rewared, langArr } from "../../lib";
 import { PlayContent } from "./Content";
+import useStore from "../../stores";
 
 const HeartIcon = (props) => <Icon {...props} name="heart" fill="yellow" />;
 const MenuIcon = (props) => <Icon {...props} name="more-vertical" />;
@@ -21,17 +28,38 @@ const TVIcon = (props) => <Icon {...props} name="tv" />;
 const GlobeIcon = (props) => <Icon {...props} name="globe" />;
 
 export const Play = ({ navigation, route }) => {
+  const { lang } = useStore();
   const { items, stage, isCapital, title, score } = route.params;
   const [menuVisible, setMenuVisible] = useState(false);
   const [life, setLife] = useState(5);
+  const [visible, setVisible] = useState(false);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [soundText, setSoundText] = useState(
     Sound.isSound ? "Sound On" : "Sound Off"
   );
+
+  useEffect(() => {
+    AdMobRewarded.addEventListener("rewardedVideoDidLoad", () => {
+      setTimeout(() => {
+        setLife(5);
+      }, 3000);
+    });
+  }, []);
+
+  const setLanguage = (index) => {
+    lang.setLang(langArr[index].key);
+    setSelectedIndex(index);
+  };
 
   const doSound = () => {
     Sound.setSound(!Sound.isSound);
     const text = Sound.isSound ? "Sound On" : "Sound Off";
     setSoundText(text);
+  };
+
+  const getLife = async () => {
+    await Rewared();
   };
 
   let lifeArr = [];
@@ -67,8 +95,19 @@ export const Play = ({ navigation, route }) => {
             onPress={() => doSound()}
             title={soundText}
           />
-          <MenuItem accessoryLeft={TVIcon} title="Get Coin" />
-          <MenuItem accessoryLeft={GlobeIcon} title="Language" />
+          <MenuItem
+            accessoryLeft={TVIcon}
+            title="Get Life"
+            onPress={() => getLife()}
+          />
+          <MenuItem
+            accessoryLeft={GlobeIcon}
+            title="Language"
+            onPress={() => {
+              setVisible(true);
+              setMenuVisible(false);
+            }}
+          />
         </OverflowMenu>
       </>
     );
@@ -95,6 +134,25 @@ export const Play = ({ navigation, route }) => {
         score={score}
       />
 
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true} style={{ width: 200 }}>
+          <RadioGroup
+            selectedIndex={selectedIndex}
+            onChange={(index) => setLanguage(index)}
+          >
+            {langArr.map((item, index) => (
+              <Radio key={index}>{item.value}</Radio>
+            ))}
+          </RadioGroup>
+          <Button size="small" onPress={() => setVisible(false)}>
+            APPLY
+          </Button>
+        </Card>
+      </Modal>
       <Banner />
     </Layout>
   );
@@ -109,5 +167,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: -4,
     letterSpacing: 1,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
