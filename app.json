@@ -23,7 +23,7 @@
         "googleMobileAdsAppId": "ca-app-pub-1963334904140891~8233588671"
       },
       "package": "com.f5game.flags",
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
