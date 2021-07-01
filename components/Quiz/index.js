@@ -10,15 +10,15 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Text, Card, Layout } from "@ui-kitten/components";
+import { BackgroundCardGradient } from "../../components/Common";
+import { observer } from "mobx-react";
 import {
   Sound,
   getStage,
   getStageItems,
   getStageItemsByColor,
 } from "../../lib";
-import { BackgroundCardGradient } from "../../components/Common";
 import Carousel from "react-native-snap-carousel";
-import { observer } from "mobx-react";
 import useStore from "../../stores";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -136,7 +136,7 @@ export const Quiz = observer(({ navigation }) => {
       <SafeAreaView>
         <ScrollView>
           <View style={styles.view}>
-            <Text style={styles.title}>국가</Text>
+            <Text style={styles.title}>Country</Text>
             <Carousel
               layout={"default"}
               sliderWidth={screenWidth}
@@ -147,7 +147,7 @@ export const Quiz = observer(({ navigation }) => {
             />
           </View>
           <View style={styles.view}>
-            <Text style={styles.title}>수도</Text>
+            <Text style={styles.title}>Capital</Text>
             <Carousel
               layout={"default"}
               sliderWidth={screenWidth}
@@ -158,7 +158,7 @@ export const Quiz = observer(({ navigation }) => {
             />
           </View>
           <View style={styles.view}>
-            <Text style={styles.title}>색상</Text>
+            <Text style={styles.title}>Colors</Text>
             <Carousel
               layout={"default"}
               sliderWidth={screenWidth}

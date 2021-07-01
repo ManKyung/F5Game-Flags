@@ -15,6 +15,8 @@ import { StyleSheet, Image, FlatList, BackHandler } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { FLAGS, CONTINENT_ARR } from "../../lib";
 import { DictionaryDetail } from "./Detail";
+import useStore from "../../stores";
+const { lang } = useStore();
 
 const MenuIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const CheckIcon = (props) => <Icon {...props} name="checkmark-outline" />;
@@ -27,8 +29,8 @@ const RenderItem = memo(
     <ListItem
       onPress={onPress}
       key={item.index}
-      title={item.name_kr}
-      description={item.name_en}
+      title={item[`name_${lang.value}`]}
+      description={lang.value === "kr" ? item.name_en : item.name_kr}
       accessoryLeft={() => (
         <Image
           source={item.image}

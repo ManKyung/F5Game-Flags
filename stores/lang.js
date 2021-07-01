@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 
 const lang = observable({
-  value: "kr",
+  value: "en",
   setLang(value) {
     this.value = value;
   },
