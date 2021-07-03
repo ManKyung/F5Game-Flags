@@ -12,7 +12,6 @@ const CloseIcon = (props) => <Icon {...props} name="close" />;
 const arePropsEqual = (prev, curr) => {
   return prev.visible === curr.visible;
 };
-const SpeakIcon = (props) => <Icon {...props} name="volume-up-outline" />;
 const elementButton = (title, value) => (
   <View
     style={{

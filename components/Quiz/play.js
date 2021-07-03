@@ -40,10 +40,8 @@ export const Play = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    AdMobRewarded.addEventListener("rewardedVideoDidLoad", () => {
-      setTimeout(() => {
-        setLife(5);
-      }, 3000);
+    AdMobRewarded.addEventListener("rewardedVideoUserDidEarnReward", () => {
+      setLife(5);
     });
   }, []);
 
